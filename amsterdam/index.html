@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>جدول رحلة أمستردام</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@600;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Inter:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a calm, premium travel-concierge itinerary — confident, no clutter.
+   IDEA: a printed canal-side travel card; days read like a timetable.
+   PICTURE: a row of Amsterdam canal houses with gables over the water, XXX mark.
+   COLOUR+TYPE: white / near-black ink / Amsterdam red; Noto Kufi titles, IBM Plex Arabic body.
+   LAYOUT: header scene, facts strip, day links, timetables with hanging times, then alternatives + notes. */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#121011);--ink:light-dark(#151314,#f3efee);--soft:light-dark(#5d5759,#b4acae);
+--red:light-dark(#c8102e,#ff4d63);--line:light-dark(#ece7e6,#2a2527);--card:light-dark(#faf7f6,#1b1719);
+--house1:light-dark(#2b2426,#3a3134);--house2:light-dark(#7a2e2a,#6a2a29);--house3:light-dark(#4b3b33,#4a3a33);--water:light-dark(#e9eef0,#191d21);--win:light-dark(#f6e9c8,#ffd98a)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "IBM Plex Sans Arabic",system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(28px,4vw,56px) max(5vw,16px)}
+.wrap{max-width:1100px;margin:0 auto}
+h1,h2,h3{font-family:"Noto Kufi Arabic",sans-serif;line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(32px,5vw,52px);font-weight:800}
+h2{font-size:clamp(24px,3vw,32px);font-weight:800}
+h3{font-size:18px;font-weight:600}
+.lat{font-family:Inter,sans-serif;direction:ltr;unicode-bidi:isolate}
+header{border-bottom:1px solid var(--line)}
+.hero{display:grid;gap:clamp(20px,4vw,48px);grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);align-items:end}
+.kick{color:var(--red);font-weight:600;margin:0 0 10px}
+.sub{color:var(--soft);font-size:17px;margin:14px 0 0;max-width:46ch}
+.scene{width:100%;height:auto;display:block}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:28px}
+.facts div{background:var(--bg);padding:14px 16px}
+.facts b{display:block;font-size:17px}.facts span{color:var(--soft);font-size:14px}
+nav.days{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.days .wrap{display:flex;gap:8px;overflow-x:auto;padding:10px max(5vw,16px)}
+nav.days a{flex:none;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-weight:600;font-size:15px;min-height:44px;display:flex;align-items:center}
+nav.days a:hover,nav.days a:focus-visible{border-color:var(--red);color:var(--red);outline:none}
+.day{border-bottom:1px solid var(--line)}
+.dhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin-bottom:22px}
+.dhead .date{color:var(--red);font-weight:600}
+.dhead p{color:var(--soft);margin:0;flex-basis:100%}
+.stop{display:grid;grid-template-columns:92px minmax(0,1fr);gap:18px;padding:18px 0;border-top:1px solid var(--line)}
+.time{font-family:Inter,"IBM Plex Sans Arabic",sans-serif;font-size:22px;font-weight:600;white-space:nowrap;line-height:1.2;color:var(--ink)}
+.time small{display:block;font-size:12px;color:var(--soft);font-weight:500;font-family:"IBM Plex Sans Arabic"}
+.tag{display:inline-block;font-size:13px;color:var(--red);border:1px solid color-mix(in srgb,var(--red) 35%,transparent);border-radius:6px;padding:0 8px;margin-inline-start:8px;vertical-align:2px}
+.stop p{margin:6px 0 0;color:var(--soft)}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:10px}
+.addr{font-size:14px;color:var(--soft)}
+.map{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:600;font-size:14px;color:#fff;background:var(--red);border-radius:999px;padding:8px 14px;min-height:40px}
+.map:hover,.map:focus-visible{filter:brightness(1.1);outline:2px solid var(--ink);outline-offset:2px}
+.map svg{width:15px;height:15px;flex:none}
+.alts{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-top:22px}
+.alt{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.alt h3{margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips a{text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:7px 12px;font-size:14px;min-height:38px;display:inline-flex;align-items:center;gap:6px}
+.chips a:hover,.chips a:focus-visible{border-color:var(--red);color:var(--red);outline:none}
+.chips a::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--red)}
+.notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}
+.note{border:1px solid var(--line);border-radius:14px;padding:18px}
+.note.warn{border-color:var(--red);background:color-mix(in srgb,var(--red) 6%,var(--bg))}
+.note h3{margin-bottom:6px}.note p,.note ul{margin:0;color:var(--soft)}.note ul{padding-inline-start:20px}
+footer{color:var(--soft);font-size:14px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.facts{grid-template-columns:repeat(2,minmax(0,1fr))}.notes{grid-template-columns:1fr}}
+@media(max-width:600px){.stop{grid-template-columns:70px minmax(0,1fr);gap:12px}.time{font-size:18px}}
+@media(prefers-reduced-motion:no-preference){.win{animation:glow 4s ease-in-out infinite alternate}.win:nth-child(3n){animation-delay:1.3s}.win:nth-child(4n){animation-delay:2.4s}}
+@keyframes glow{from{opacity:.55}to{opacity:1}}
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <p class="kick">برنامج الرحلة · ٣ أشخاص</p>
+        <h1>أمستردام في سبعة أيام</h1>
+        <p class="sub">من الخميس ٢٦ نوفمبر إلى الأربعاء ٢ ديسمبر ٢٠٢٦. الأماكن مرتبة حسب قربها من بعض، وكل مكان له زر يفتح موقعه على الخريطة.</p>
+      </div>
+      <svg class="scene" viewBox="0 0 520 260" role="img" aria-label="بيوت القنوات في أمستردام على الماء">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--red)" stop-opacity=".10"/><stop offset="1" stop-color="var(--red)" stop-opacity="0"/></linearGradient>
+          <g id="w"><rect class="win" width="10" height="14" rx="1.5" fill="var(--win)"/></g>
+        </defs>
+        <rect width="520" height="200" fill="url(#sky)"/>
+        <!-- houses -->
+        <path d="M20 200V92l14-12v-10h12v10l14 12v108z" fill="var(--house1)"/>
+        <path d="M60 200V70l12-14h6l-4-10h20l-4 10h6l12 14v130z" fill="var(--house2)"/>
+        <path d="M108 200V104h6v-10h8v-10h8v-10h12v10h8v10h8v10h6v96z" fill="var(--house3)"/>
+        <path d="M164 200V60q24-28 48 0v140z" fill="var(--house1)"/>
+        <path d="M212 200V96l12-10v-8h28v8l12 10v104z" fill="var(--house2)"/>
+        <path d="M264 200V78h6v-10h8v-10h8v-10h10v10h8v10h8v10h6v122z" fill="var(--house1)"/>
+        <path d="M318 200V90q22-30 44 0v110z" fill="var(--house3)"/>
+        <path d="M362 200V66l16-16 16 16v134z" fill="var(--house2)"/>
+        <path d="M394 200V100h6v-10h8v-10h22v10h8v10h6v100z" fill="var(--house1)"/>
+        <path d="M444 200V84q28-30 56 0v116z" fill="var(--house3)"/>
+        <g>
+          <use href="#w" x="33" y="110"/><use href="#w" x="33" y="140"/><use href="#w" x="33" y="170"/>
+          <use href="#w" x="72" y="84"/><use href="#w" x="88" y="84"/><use href="#w" x="72" y="118"/><use href="#w" x="88" y="118"/><use href="#w" x="72" y="152"/><use href="#w" x="88" y="152"/>
+          <use href="#w" x="122" y="116"/><use href="#w" x="138" y="116"/><use href="#w" x="130" y="150"/>
+          <use href="#w" x="178" y="80"/><use href="#w" x="196" y="80"/><use href="#w" x="178" y="118"/><use href="#w" x="196" y="118"/><use href="#w" x="187" y="156"/>
+          <use href="#w" x="226" y="110"/><use href="#w" x="244" y="110"/><use href="#w" x="235" y="148"/>
+          <use href="#w" x="278" y="88"/><use href="#w" x="296" y="88"/><use href="#w" x="278" y="124"/><use href="#w" x="296" y="124"/><use href="#w" x="287" y="160"/>
+          <use href="#w" x="333" y="110"/><use href="#w" x="333" y="146"/>
+          <use href="#w" x="373" y="82"/><use href="#w" x="373" y="118"/><use href="#w" x="373" y="154"/>
+          <use href="#w" x="406" y="112"/><use href="#w" x="422" y="112"/><use href="#w" x="414" y="148"/>
+          <use href="#w" x="460" y="104"/><use href="#w" x="478" y="104"/><use href="#w" x="460" y="140"/><use href="#w" x="478" y="140"/>
+        </g>
+        <!-- quay and water -->
+        <rect x="0" y="198" width="520" height="8" fill="var(--house1)"/>
+        <rect x="0" y="206" width="520" height="54" fill="var(--water)"/>
+        <g stroke="var(--win)" stroke-width="2" stroke-linecap="round" opacity=".7">
+          <path d="M40 222h22M80 232h30M128 224h14M180 236h26M232 222h20M286 232h24M334 224h16M378 236h22M414 224h18M466 232h26"/>
+        </g>
+        <!-- XXX -->
+        <g fill="var(--red)" transform="translate(470 34)">
+          <path d="M-12-6l4-4 4 4 4-4 4 4-4 4 4 4-4 4-4-4-4 4-4-4 4-4z" transform="translate(-22 0)"/>
+          <path d="M-12-6l4-4 4 4 4-4 4 4-4 4 4 4-4 4-4-4-4 4-4-4 4-4z"/>
+          <path d="M-12-6l4-4 4 4 4-4 4 4-4 4 4 4-4 4-4-4-4 4-4-4 4-4z" transform="translate(22 0)"/>
+        </g>
+      </svg>
+    </div>
+    <div class="facts">
+      <div><b>Leonardo Eden Hotel</b><span class="lat">Amstel 144</span></div>
+      <div><b>٦ ليالي</b><span>الوصول الخميس، والمغادرة الأربعاء</span></div>
+      <div><b>٣ أشخاص</b><span>شقة Superior</span></div>
+      <div><b>حوالي 9°م</b><span>والغروب قرابة 4:35 العصر</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="days" aria-label="الأيام"><div class="wrap" id="nav"></div></nav>
+<main id="days"></main>
+
+<section class="band" id="alts">
+  <div class="wrap">
+    <h2>بدائل من القائمة</h2>
+    <p class="sub">لو تغيّر المزاج أو كان المكان زحمة، هذي بقية الاقتراحات مع مواقعها.</p>
+    <div class="alts" id="altGrid"></div>
+  </div>
+</section>
+
+<section class="band" id="notes" style="border-top:1px solid var(--line)">
+  <div class="wrap">
+    <h2>قبل السفر</h2>
+    <div class="notes">
+      <div class="note warn"><h3>الفندق محجوز لليلتين فقط</h3><p>الحجز الحالي من الخميس ٢٦ إلى السبت ٢٨، لشخصين بسرير مزدوج واحد. لازم تمددون أربع ليالي (من ٢٨ نوفمبر إلى ٢ ديسمبر) أو تحجزون فندق ثاني، وتطلبون سرير للشخص الثالث. الإضافات ما هي داخلة في السعر.</p></div>
+      <div class="note"><h3>احجزوا من الحين</h3><ul><li>قارب مهرجان الأضواء ليلة الخميس</li><li>سيارة مع سائق لرحلة Giethoorn يوم الأحد</li><li>العشاء: Mr Porter و The Siren و Secret Garden و Madam</li><li>Door 74 لازم حجز</li></ul></div>
+      <div class="note"><h3>الطقس والملابس</h3><p>بارد وممطر أغلب أيام نوفمبر. جاكيت ومظلة وحذاء مريح، لأن أغلب البرنامج مشي.</p></div>
+      <div class="note"><h3>أرقام مهمة</h3><p>الفندق: <span class="lat">+31 20 530 7878</span><br>الطوارئ في هولندا: <span class="lat">112</span><br>أرسلوا للفندق موعد وصولكم المتوقع.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="band"><div class="wrap">ملاحظة: مواعيد المطاعم والأماكن ممكن تتغير، فالأفضل تتأكدون منها قبل الذهاب بيوم.</div></footer>
+
+<script>
+{
+const pin='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>';
+const maps=q=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const days=[
+{id:'day1',tab:'الخميس ٢٦',title:'الوصول وليلة الأضواء',date:'الخميس ٢٦ نوفمبر',intro:'يوم خفيف بعد السفر: غروب من فوق السطح، ثم أول ليلة لمهرجان الأضواء، وعشاء وسهرة في نفس المبنى.',stops:[
+ {t:'15:00',n:'Leonardo Eden Hotel',tag:'الفندق',d:'تسجيل الدخول وساعة راحة. الفندق جنب Rembrandtplein، وأغلب البرنامج يوصل له مشي.',a:'Amstel 144, Amsterdam'},
+ {t:'16:00',n:'Zoku Rooftop',tag:'روفتوب',d:'غروب الشمس قرابة 4:35. عشر دقايق مشي من الفندق.',a:'Weesperstraat 105, Amsterdam'},
+ {t:'17:30',n:'مهرجان أمستردام للأضواء',tag:'تجربة',d:'أول ليلة للمهرجان (الأضواء من 4:30 العصر إلى 11 بالليل). رحلة القارب ساعة وربع تقريباً، وتنطلق من جهة المحطة المركزية.',a:'Amsterdam Centraal',q:'Amsterdam Light Festival cruise Amsterdam Centraal'},
+ {t:'19:30',n:'Mr Porter',tag:'ستيك',d:'مطعم ستيك فوق فندق W.',a:'Spuistraat 175, Amsterdam',q:'Mr Porter Steakhouse Spuistraat 175 Amsterdam'},
+ {t:'21:30',n:'W Lounge',tag:'روفتوب ليلي',d:'في نفس المبنى، مباشرة بعد العشاء، مع إطلالة على أسطح المدينة.',a:'Spuistraat 175, Amsterdam',q:'W Lounge W Amsterdam'},
+ {t:'بعد 12',n:'Rembrandtplein',tag:'سهرة',d:'الساحة جنب الفندق، فالرجعة مشي.',a:'Rembrandtplein, Amsterdam'}
+]},
+{id:'day2',tab:'الجمعة ٢٧',title:'طواحين الهواء والجوردان',date:'الجمعة ٢٧ نوفمبر',intro:'الصباح خارج المدينة عند الطواحين، والعصر في أجمل حارات أمستردام، والليل عشاء فاخر وبار سري.',stops:[
+ {t:'08:30',n:'Bakkerij Wolf',tag:'فطور',d:'مخبز معروف بالكرواسون والشكشوكة، في منطقة الشوارع التسعة.',a:'Wolvenstraat 22, Amsterdam'},
+ {t:'09:45',n:'Zaanse Schans',tag:'نشاط',d:'طواحين الهواء والبيوت الخشبية. قطار قصير من المحطة المركزية إلى محطة Zaandijk Zaanse Schans. الرجعة قرابة 1 الظهر.',a:'Schansend 7, Zaandam',q:'Zaanse Schans'},
+ {t:'13:30',n:'Fabel Friet',tag:'بطاطس',d:'أشهر بطاطس في أمستردام، وغالباً عليه طابور.',a:'Runstraat 1, Amsterdam'},
+ {t:'14:15',n:"Pat's Poffertjes",tag:'حلا',d:'البان كيك الهولندي الصغير، يُخبز طازج.',a:'Oude Leliestraat 7, Amsterdam'},
+ {t:'15:00',n:'Winkel 43 + Toki',tag:'قهوة وحلا',d:'فطيرة التفاح المشهورة في Winkel 43، وبعدها قهوة في Toki. الاثنين في الجوردان.',a:'Noordermarkt 43 · Binnen Dommersstraat 15',q:'Winkel 43 Noordermarkt Amsterdam',q2:'Toki Binnen Dommersstraat 15 Amsterdam',n2:'Toki'},
+ {t:'16:30',n:'راحة في الفندق',tag:'استرخاء',d:'استراحة قبل السهرة.',a:'Amstel 144, Amsterdam',q:'Leonardo Eden Hotel Amsterdam City Center'},
+ {t:'19:00',n:'The Siren',tag:'عشاء فاخر',d:'مطعم متوسطي بديكور لافت على شارع Rokin.',a:'Rokin 83, Amsterdam',q:'The Siren Rokin 83 Amsterdam'},
+ {t:'22:30',n:'Door 74',tag:'بار سري',d:'بار خلف باب مخفي (هو Studio 74 اللي في القائمة)، ولازم له حجز. قريب من الفندق.',a:'Reguliersdwarsstraat 74, Amsterdam'}
+]},
+{id:'day3',tab:'السبت ٢٨',title:'الحيوانات ومنطقة De Pijp',date:'السبت ٢٨ نوفمبر',intro:'الصباح في الشرق قرب الفندق، والعصر في De Pijp حيث المطعم الهندي والحلا وتجربة Heineken، والليل في Secret Garden.',stops:[
+ {t:'09:00',n:'Bakhuys',tag:'فطور',d:'مخبز عائلي من 1926 بفرن حطب، قريب جداً من الفندق.',a:'Sarphatistraat 61, Amsterdam'},
+ {t:'10:15',n:'Artis',tag:'نشاط',d:'حديقة الحيوان وساحة الفلامنغو، عشر دقايق من Bakhuys.',a:'Plantage Kerklaan 38-40, Amsterdam',q:'ARTIS Amsterdam Royal Zoo'},
+ {t:'13:00',n:'Pind Punjabi',tag:'هندي',d:'مطعم هندي، وأكله حلال.',a:'Van Woustraat 240, Amsterdam'},
+ {t:'14:15',n:'Have a Roll',tag:'حلا',d:'سينابون بنكهات كثيرة، على نفس الشارع. للأخذ فقط.',a:'Van Woustraat 42, Amsterdam'},
+ {t:'15:00',n:'Heineken Experience',tag:'تجربة',d:'جولة داخل مصنع Heineken القديم.',a:'Stadhouderskade 78, Amsterdam'},
+ {t:'17:00',n:'Glouglou',tag:'جلسة عصرية',d:'جلسة هادية في De Pijp قبل العشاء.',a:'De Pijp, Amsterdam',q:'Glouglou Amsterdam De Pijp'},
+ {t:'19:30',n:'Secret Garden',tag:'عشاء فاخر',d:'أكل ياباني-بيروفي في مكان مليان نباتات، مع DJ في اللاونج. خمس دقايق من الفندق.',a:'Reguliersdwarsstraat 38, Amsterdam'},
+ {t:'بعد 12',n:'Leidseplein',tag:'سهرة',d:'منطقة البارات والكلوبات.',a:'Leidseplein, Amsterdam'}
+]},
+{id:'day4',tab:'الأحد ٢٩',title:'رحلة Giethoorn',date:'الأحد ٢٩ نوفمبر',intro:'يوم كامل خارج المدينة في القرية اللي شوارعها قنوات. ننصح بسيارة خاصة مع سائق: المشوار ساعة ونص بالسيارة، وساعتين ونص بالمواصلات.',stops:[
+ {t:'08:00',n:'فطور خفيف والانطلاق',tag:'الطريق',d:'السائق يمرّكم من الفندق الساعة 8:30.',a:'Amstel 144, Amsterdam',q:'Leonardo Eden Hotel Amsterdam City Center'},
+ {t:'10:15',n:'Giethoorn',tag:'رحلة يوم',d:'جولة قارب في القنوات ساعة تقريباً، ثم مشي بين البيوت ذات الأسقف القش. البسوا ملابس ثقيلة.',a:'Giethoorn',q:'Giethoorn'},
+ {t:'12:30',n:'غداء في القرية',tag:'غداء',d:'مطاعم ومقاهي على القنوات.',a:'Giethoorn',q:'restaurants Giethoorn'},
+ {t:'15:00',n:'الرجعة إلى أمستردام',tag:'الطريق',d:'الوصول قرابة 4:30 العصر، وراحة في الفندق.',a:'Amstel 144, Amsterdam',q:'Leonardo Eden Hotel Amsterdam City Center'},
+ {t:'19:30',n:'Lolo',tag:'إيطالي',d:'مطعم إيطالي بديكور كباريه جريء، قريب من ساحة Dam.',a:'Oudekerksplein 48, Amsterdam',q:'Lolo Amsterdam Oudekerksplein 48'},
+ {t:'21:30',n:'LuminAir',tag:'روفتوب ليلي',d:'فوق فندق DoubleTree جنب المحطة المركزية، والمدينة كلها تحت.',a:'DoubleTree by Hilton, Amsterdam Centraal',q:'LuminAir Sky Bar DoubleTree Amsterdam Centraal'}
+]},
+{id:'day5',tab:'الاثنين ٣٠',title:'غرب المدينة وأعلى الإطلالات',date:'الاثنين ٣٠ نوفمبر',intro:'قهوة ودراجات في Oud-West، وغروب من أعلى روفتوب في أمستردام، وسهرة في الدور 24.',stops:[
+ {t:'09:30',n:'Uncommon',tag:'قهوة وفطور',d:'من أجمل مقاهي أمستردام، في Oud-West.',a:'Eerste Constantijn Huygensstraat 63, Amsterdam',q:'Uncommon cafe Eerste Constantijn Huygensstraat 63 Amsterdam'},
+ {t:'10:30',n:'دراجات في Vondelpark',tag:'نشاط',d:'استأجروا دراجات وتجولوا في الحديقة والقنوات حولها.',a:'Vondelpark, Amsterdam',q2:'bike rental Amsterdam Vondelpark',n2:'تأجير دراجات'},
+ {t:'13:00',n:'Le Smash',tag:'برجر',d:'من أشهر محلات السماش برجر في المدينة.',a:'Govert Flinckstraat 122, Amsterdam',q:'Le Smash Govert Flinckstraat 122 Amsterdam'},
+ {t:'14:30',n:'مساج',tag:'استرخاء',d:'جلسة مساج قبل المساء. احجزوا في الفندق أو في سبا قريب.',a:'Amsterdam',q:'massage spa Amsterdam centrum'},
+ {t:'16:00',n:'Floor17',tag:'روفتوب غروب',d:'أعلى روفتوب في أمستردام (85 متر)، في الغرب. في الشتاء يتحول السطح لجلسات دافئة.',a:'Staalmeesterslaan 410, Amsterdam',q:'Floor17 Staalmeesterslaan 410 Amsterdam'},
+ {t:'19:30',n:'Nonna',tag:'إيطالي',d:'مطعم إيطالي عائلي في Oud-West (هو Nona اللي في القائمة).',a:'Jan Pieter Heijestraat, Amsterdam',q:'Nonna restaurant Jan Pieter Heijestraat Amsterdam'},
+ {t:'22:00',n:'Sonora · nhow',tag:'روفتوب ليلي',d:'بار في الدور 24 من فندق nhow (هو "nhow sky bar" اللي في القائمة).',a:'Europaboulevard 2B, Amsterdam',q:'Sonora Bar nhow Amsterdam RAI'}
+]},
+{id:'day6',tab:'الثلاثاء ١',title:'التسوق وآخر ليلة',date:'الثلاثاء ١ ديسمبر',intro:'يوم هادي للتسوق، ثم مشي على مسار الأضواء، وعشاء الوداع في أعلى برج.',stops:[
+ {t:'10:00',n:'Chun',tag:'فطور',d:'فطور متأخر قبل التسوق.',a:'Berenstraat, Amsterdam',q:'Chun Cafe Berenstraat Amsterdam'},
+ {t:'11:00',n:'الشوارع التسعة و Kalverstraat',tag:'تسوق',d:'محلات صغيرة في الشوارع التسعة، والماركات الكبيرة في Kalverstraat.',a:'De 9 Straatjes, Amsterdam',q:'De 9 Straatjes Amsterdam',q2:'Kalverstraat Amsterdam',n2:'Kalverstraat'},
+ {t:'14:00',n:'Maijards',tag:'برجر',d:'برجر من القائمة. البدائل: Paindemi أو Bill\'s Burger.',a:'Amsterdam',q:'Maijards Amsterdam'},
+ {t:'15:30',n:"René's Croissanterie",tag:'حلا',d:'التشوروز المشهورة في وسط المدينة.',a:'وسط المدينة',q:"René's Croissanterie Amsterdam"},
+ {t:'17:00',n:'مسار الأضواء مشي',tag:'تجربة',d:'هالمرة على الأقدام بدل القارب. المسار حوالي 6.5 كم، وتلقونه في تطبيق المهرجان.',a:'Amsterdam',q:'Amsterdam Light Festival route'},
+ {t:'19:30',n:"Madam · A'DAM Tower",tag:'عشاء الوداع',d:'خذوا العبّارة المجانية من خلف المحطة المركزية. إطلالة ليلية على المدينة كلها.',a:'Overhoeksplein 1, Amsterdam',q:"Madam A'DAM Tower Amsterdam"},
+ {t:'بعد 12',n:'Rembrandtplein',tag:'سهرة',d:'آخر سهرة جنب الفندق.',a:'Rembrandtplein, Amsterdam'}
+]},
+{id:'day7',tab:'الأربعاء ٢',title:'صباح الوداع',date:'الأربعاء ٢ ديسمبر',intro:'صباح قصير قرب الفندق، ثم المطار. عدّلوا الأوقات على موعد الطيارة.',stops:[
+ {t:'09:00',n:'Bocca Coffee',tag:'قهوة',d:'من أشهر محامص أمستردام، قريب من الفندق.',a:'Kerkstraat 96, Amsterdam',q:'Bocca Coffee Kerkstraat 96 Amsterdam'},
+ {t:'10:00',n:'آخر جولة على القنوات',tag:'مشي',d:'مشي هادي على Amstel و Herengracht لآخر الصور.',a:'Herengracht, Amsterdam',q:'Herengracht Golden Bend Amsterdam'},
+ {t:'11:30',n:'تسجيل الخروج',tag:'الفندق',d:'خلّوا الشنط في الاستقبال لو الطيارة متأخرة.',a:'Amstel 144, Amsterdam',q:'Leonardo Eden Hotel Amsterdam City Center'},
+ {t:'حسب الرحلة',n:'مطار سخيبول',tag:'المغادرة',d:'قطار مباشر من المحطة المركزية إلى المطار.',a:'Schiphol',q:'Amsterdam Airport Schiphol'}
+]}];
+
+const alts=[
+ ['فطور',['Lebanese Saj','Montys']],
+ ['قهوة',['Sam\'s','Yusu','Layers','Baskets','Rumbob']],
+ ['برجر',['Paindemi','Bill\'s Burger']],
+ ['جلسات',['Fitz\'s','Zum Barbaross','Shu','Trees Bar','Cue']],
+ ['روفتوب ومسابح',['Stretch & Fold','Soho House (للأعضاء)']]
+];
+
+const btn=(q,label)=>`<a class="map" href="${maps(q)}" target="_blank" rel="noopener">${pin}${esc(label)}</a>`;
+
+document.getElementById('nav').innerHTML=days.map(d=>`<a href="#${d.id}">${esc(d.tab)}</a>`).join('')+'<a href="#alts">البدائل</a><a href="#notes">قبل السفر</a>';
+
+document.getElementById('days').innerHTML=days.map(d=>`
+<section class="band day" id="${d.id}"><div class="wrap">
+ <div class="dhead"><h2>${esc(d.title)}</h2><span class="date">${esc(d.date)}</span><p>${esc(d.intro)}</p></div>
+ ${d.stops.map(s=>{const t=s.t.includes(':')?`<span class="lat">${esc(s.t)}</span>`:esc(s.t);
+ return `<div class="stop"><div class="time">${t}</div><div>
+  <h3>${esc(s.n)}<span class="tag">${esc(s.tag)}</span></h3>
+  <p>${esc(s.d)}</p>
+  <div class="row">${btn(s.q||s.n+' '+s.a,'الموقع')}${s.q2?btn(s.q2,s.n2):''}<span class="addr lat">${esc(s.a)}</span></div>
+ </div></div>`}).join('')}
+</div></section>`).join('');
+
+document.getElementById('altGrid').innerHTML=alts.map(([h,l])=>`<div class="alt"><h3>${esc(h)}</h3><div class="chips">${l.map(n=>`<a href="${maps(n.startsWith('Giethoorn')?'Giethoorn':n==='جولة دراجات'?'bike rental Amsterdam':n.replace(/\s*\(.*\)/,'')+' Amsterdam')}" target="_blank" rel="noopener">${esc(n)}</a>`).join('')}</div></div>`).join('');
+}
+</script>
+</body>
+</html>
